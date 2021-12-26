@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model Task4.Models.UsersTableViewModel
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    
+    @if(User.Identity.IsAuthenticated)
+    {
+        <p>@User.Identity.Name</p>
+        <form method="post" asp-controller="Account" asp-action="Delete">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Registration Date</th>
+                                <th scope="col">Last Login Date</th>
+                                <th scope="col">Select
+                                    <span class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="checkAll">
+                                        <label class="custom-control-label" for="checkAll"></label>
+                                    </span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 0;
+                            }        
+         @foreach (var user in Model.Users)
+            {
+             <tr>
+            <td> @user.UserId</td>
+            <td>@user.Email</td>
+            <td> @Model.Statuses.Where(s=>s.Id == @user.StatusId).First().StatusName</td>
+            <td>
+                <p id = "regDate@(user.UserId)">Here</p>
+                <script type = "text/javascript">
+                    var localDate = new Date("@(user.RegistrationDate.ToString("MM/dd/yyyy HH:mm:ss")) UTC");
+                    (document.getElementById("regDate@(user.UserId)")).textContent = localDate.toLocaleString();
+                </script>             
+            </td>
+               
+            <td>
+                <p id = "loginDate@(user.UserId)">Here</p>
+                <script type = "text/javascript">
+                    var localDate = new Date("@(user.LastLoginDate.ToString("MM/dd/yyyy HH:mm:ss")) UTC");
+                    (document.getElementById("loginDate@(user.UserId)")).textContent = localDate.toLocaleString();
+                </script>              
+            </td>
+                        <td>
+              <div class="custom-control custom-checkbox">
+
+                  @Html.CheckBoxFor(Model=>Model.UserChecked[@i],new {@class = "custom-control-input"})
+                  @Html.LabelFor(Model=>Model.UserChecked[@i],"",new {@class = "custom-control-label"})
+                  
+                @{
+                     
+                    i++;
+                }  
+                </div>
+            </td>
+          </tr>
+         }
+           
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+    
+    <div>
+        <input asp-controller = "Account" asp-action = "Delete" type="submit" value="Delete Selected" />
+        <input  asp-controller = "Account" asp-action = "Block" type="submit" value="Block"/>
+        <input asp-controller = "Account" asp-action = "Unblock" type="submit" value="Unblock" />
+    </div>
+</form>
+
+    }
+    else
+    {
+        <a asp-controller="Account" asp-action="Login">Login</a>
+        <a asp-controller="Account" asp-action="Register">Register</a>
+    }
+
+</div>
